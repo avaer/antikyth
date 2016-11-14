@@ -1,5 +1,6 @@
 {
   "name": "antikyth",
+  "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
     "nan": "^2.4.0"
