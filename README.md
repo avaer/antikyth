@@ -1,7 +1,15 @@
 # Antikyth
-Bullet Physics 3 server bindings for node.js. Designed for multiple realtime clients.
+Bullet Physics 3 server for node.js. Designed for multiple realtime clients.
 
-Runs at native C++ speed in a dedicated process. This is _not_ an emscripten Javascript build and does _not_ run in the browser. If that's what you want, you're probably looking for the much slower ammo.js.
+Runs at native C++ speed in a dedicated process, so this is probably the fastest physics you can get for `node`. This is _not_ an emscripten build, and does _not_ run in the browser. If that's what you want, you're probably looking for [ammo.js](https://github.com/kripken/ammo.js/).
+
+This also does not include any rendering, only the backend number crunching. If you want rendering, you probably want to plug this into a [THREE.js](https://github.com/mrdoob/three.js/) frontend.
+
+## Install
+
+```
+npm install antikyth
+```
 
 ## Example
 
