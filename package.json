@@ -1,9 +1,11 @@
 {
-  "name": "nodebullet",
+  "name": "antikyth",
+  "main": "index.js",
   "dependencies": {
     "nan": "^2.4.0"
   },
   "scripts" : {
+    "preinstall": "./build.sh",
     "test" : "node test.js"
   }
 }

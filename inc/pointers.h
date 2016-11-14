@@ -23,6 +23,9 @@ namespace mox {
     typedef std::shared_ptr<btCollisionShape>
       btCollisionShapePtr;
 
+    typedef std::shared_ptr<btTriangleMesh>
+      btTriangleMeshPtr;
+
     typedef std::shared_ptr<btDefaultMotionState>
       btDefaultMotionStatePtr;
 

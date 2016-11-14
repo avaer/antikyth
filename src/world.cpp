@@ -36,6 +36,7 @@ void mox::physics::World::Init(v8::Local<v8::Object> namespc)
   DEFINE_FUNCTION_TEMPLATE("World", tpl);
 
   Nan::SetPrototypeMethod(tpl, "addRigidBody", addRigidBody);
+  Nan::SetPrototypeMethod(tpl, "removeRigidBody", removeRigidBody);
   Nan::SetPrototypeMethod(tpl, "stepSimulation", stepSimulation);
   Nan::SetPrototypeMethod(tpl, "analyse", analyse);
 
@@ -63,6 +64,20 @@ NAN_METHOD(mox::physics::World::addRigidBody)
 
     btRigidBodyPtr btRigidBody = rigidBody->getRigidBody();
     self->m_discreteDynamicsWorld->addRigidBody(btRigidBody.get());
+  }
+}
+
+NAN_METHOD(mox::physics::World::removeRigidBody)
+{
+  CHECK_NUM_ARGUMENTS(info, 1);
+  GET_SELF(mox::physics::World, self);
+
+  if (!info[0]->IsUndefined()) {
+    mox::physics::RigidBody *rigidBody =
+      Nan::ObjectWrap::Unwrap<mox::physics::RigidBody>(info[0]->ToObject());
+
+    btRigidBodyPtr btRigidBody = rigidBody->getRigidBody();
+    self->m_discreteDynamicsWorld->removeRigidBody(btRigidBody.get());
   }
 }
 
