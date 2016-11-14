@@ -13,7 +13,7 @@ npm install antikyth
 
 ## Example
 
-```
+```js
 const Antikyth = require('.');
 
 // initialize new physics engine
