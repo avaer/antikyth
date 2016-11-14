@@ -1,0 +1,9 @@
+{
+  "name": "nodebullet",
+  "dependencies": {
+    "nan": "^2.4.0"
+  },
+  "scripts" : {
+    "test" : "node test.js"
+  }
+}
