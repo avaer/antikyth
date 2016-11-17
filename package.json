@@ -2,6 +2,7 @@
   "name": "antikyth",
   "version": "0.0.2",
   "main": "index.js",
+  "server": "server.js",
   "dependencies": {
     "nan": "^2.4.0"
   },
