@@ -49,17 +49,23 @@ world.addRigidBody(sphere1); */
 } */
 
 const _requestUpdate = () => {
-  bodies.forEach((bodyRecord, bodyId) => {
+  const updates = bodies.map((bodyRecord, bodyId) => {
     const {body} = bodyRecord;
     const position = body.getPosition();
     const rotation = body.getRotation();
+    const linearVelocity = body.getLinearVelocity();
+    const angularVelocity = body.getAngularVelocity();
 
-    send('update', {
+    return {
       id: bodyId,
       position,
       rotation,
-    });
+      linearVelocity,
+      angularVelocity,
+    };
   });
+
+  send('update', updates);
 };
 let interval = null;
 const _start = () => {

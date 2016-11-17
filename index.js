@@ -11,11 +11,18 @@ class Antikyth extends EventEmitter {
       const {type} = m;
 
       if (type === 'update') {
-        const {data: {id}} = m;
-        const listener = this.updateListeners.get(id);
-        if (listener) {
-          const {data: {position, rotation}} = m;
-          listener({position, rotation});
+        const {data: updates} = m;
+
+        this.emit('update', updates);
+
+        for (let i = 0; i < updates.length; i++) {
+          const update = updates[i];
+          const {id} = update;
+          const listener = this.updateListeners.get(id);
+          if (listener) {
+            const {position, rotation, linearVelocity, angularVelocity} = update;
+            listener({position, rotation, linearVelocity, angularVelocity});
+          }
         }
       } else {
         console.warn('unknown message type:', JSON.stringify(type));
@@ -26,6 +33,7 @@ class Antikyth extends EventEmitter {
     });
 
     this.workerProcess = workerProcess;
+    this.updatesListeners = [];
     this.updateListeners = new Map();
   }
 
