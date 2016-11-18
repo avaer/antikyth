@@ -2,13 +2,9 @@ const Antikyth = require('antikyth');
 
 const OPEN = 1; // ws.OPEN
 
-class World {
+class Context {
   constructor(name) {
     this._name = name;
-
-    const engine = new Antikyth();
-    engine.start();
-    this.engine = engine;
 
     this.objects = new Map();
   }
@@ -16,6 +12,11 @@ class World {
   create(type, opts) {
     const object = (() => {
       switch (type) {
+        case 'engine': {
+          const engine = new Antikyth(opts);
+          engine.start();
+          return engine;
+        }
         case 'world': return new Antikyth.World(opts);
         case 'plane': return new Antikyth.Plane(opts);
         case 'box': return new Antikyth.Box(opts);
@@ -29,12 +30,20 @@ class World {
 
       return object.id;
     } else {
-      return null;
+      return null3;
     }
   }
 
   destroy(id) {
-    this.objects.delete(id);
+    const {objects} = this;
+
+    const object = objects.get(id);
+    if (object instanceof Antikyth) {
+      object.stop();
+      object.destroy();
+    }
+
+    objects.delete(id);
   }
 
   add(parentId, childId) {
@@ -81,10 +90,12 @@ class World {
     object.setAngularVelocity(angularVelocity);
   }
 
-  getUpdate(cb) {
-    this.engine.requestUpdate();
+  requestUpdate(id, cb) {
+    const {objects} = this;
 
-    this.engine.once('update', updates => {
+    const object = objects.get(id);
+    object.requestUpdate();
+    object.once('update', updates => {
       cb(null, updates);
     });
   }
@@ -92,7 +103,7 @@ class World {
 
 const server = ({wss}) => ({
   mount() {
-    const worlds = new Map();
+    const contexts = new Map();
 
     const connections = [];
 
@@ -101,12 +112,12 @@ const server = ({wss}) => ({
 
       const match = url.match(/\/archae\/antikythWs\/(.*)/);
       if (match) {
-        const worldName = match[1];
+        const contextName = match[1];
 
-        let world = worlds.get(worldName);
-        if (!world) {
-          world = new World();
-          worlds.set(worldName, world);
+        let context = contexts.get(contextName);
+        if (!context) {
+          context = new Context();
+          contexts.set(contextName, context);
         }
 
         c.on('message', s => {
@@ -128,46 +139,48 @@ const server = ({wss}) => ({
 
             if (method === 'create') {
               const [type, opts] = args;
-              const id = world.create(type, opts);
+              const id = context.create(type, opts);
 
               cb(null, id);
             } else if (method === 'destroy') {
               const [id] = args;
-              world.destroy(id);
+              context.destroy(id);
 
               cb();
             } else if (method === 'add') {
               const [parentId, childId] = args;
-              world.add(parentId, childId);
+              context.add(parentId, childId);
 
               cb();
             } else if (method === 'remove') {
               const [parentId, childId] = args;
-              world.remove(parentId, childId);
+              context.remove(parentId, childId);
 
               cb();
             } else if (method === 'setPosition') {
               const [id, position] = args;
-              world.setPosition(id, position);
+              context.setPosition(id, position);
 
               cb();
             } else if (method === 'setRotation') {
               const [id, rotation] = args;
-              world.setRotation(id, rotation);
+              context.setRotation(id, rotation);
 
               cb();
             } else if (method === 'setLinearVelocity') {
               const [id, linearVelocity] = args;
-              world.setLinearVelocity(id, linearVelocity);
+              context.setLinearVelocity(id, linearVelocity);
 
               cb();
             } else if (method === 'setAngularVelocity') {
               const [id, angularVelocity] = args;
-              world.setAngularVelocity(id, angularVelocity);
+              context.setAngularVelocity(id, angularVelocity);
 
               cb();
             } else if (method === 'requestUpdate') {
-              world.getUpdate(updates => {
+              const [id] = args;
+
+              context.requestUpdate(id, updates => {
                 if (live) {
                   cb(null, updates);
                 }

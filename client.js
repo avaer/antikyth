@@ -3,8 +3,8 @@ const TICK_TIME = 1000 / FRAME_RATE;
 
 const client = () => ({
   mount() {
-    const _connect = (worldName, cb) => {
-      const connection = new WebSocket('ws://' + location.host + '/archae/antikythWs/' + worldName);
+    const _connect = (contextName, cb) => {
+      const connection = new WebSocket('ws://' + location.host + '/archae/antikythWs/' + contextName);
       connection.onopen = () => {
         if (queue.length > 0) {
           for (let i = 0; i < queue.length; i++) {
@@ -15,8 +15,7 @@ const client = () => ({
 
           queue = [];
 
-          const api = _makeApi();
-          cb(null, api);
+          cb(null, Engine);
         }
       };
       connection.onerror = err => {
@@ -117,15 +116,18 @@ const client = () => ({
         }
       };
 
-      class World {
+      class Engine {
         constructor(opts) {
-          _request('create', ['world', {}], err => {
-            if (err) {
-              console.warn(err);
-            }
-          });
+          _request('create', ['engine', {}], _warnError);
         }
       }
+
+      class World {
+        constructor(opts) {
+          _request('create', ['world', {}], _warnError);
+        }
+      }
+      Engine.World = World;
 
       class Body {
         constructor(type, opts) {
@@ -166,31 +168,28 @@ const client = () => ({
           _request('setAngularVelocity', [id, angularVelocity], _warnError);
         }
       }
+      Engine.Body = Body;
 
       class Plane extends Body {
         constructor(opts) {
           super('plane', opts);
         }
       }
+      Engine.Plane = Plane;
 
       class Sphere extends Body {
         constructor(opts) {
           super('sphere', opts);
         }
       }
+      Engine.Sphere = Sphere;
 
       class Box extends Body {
         constructor(opts) {
           super('box', opts);
         }
       }
-
-      const _makeApi = () => ({
-        World,
-        Plane,
-        Sphere,
-        Box,
-      });
+      Engine.Box = Box;
     };
 
     return {
