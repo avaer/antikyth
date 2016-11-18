@@ -77,7 +77,7 @@ const client = () => ({
         })();
 
         const _requestUpdate = () => {
-          _request('update', [], (err, updates) => {
+          _request('requestUpdate', [], (err, updates) => {
             for (let i = 0; i < updates.length; i++) {
               const update = updates[i];
               const {id} = update;

@@ -118,7 +118,12 @@ const server = ({wss}) => ({
               world.remove(parentId, childId);
 
               cb();
-            } else if (method === 'update') {
+} else if (method === 'remove') {
+              const [parentId, childId] = args;
+              world.remove(parentId, childId);
+
+              cb();
+            } else if (method === 'requestUpdate') {
               world.getUpdate(updates => {
                 if (live) {
                   cb(null, updates);
