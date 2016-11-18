@@ -2,6 +2,8 @@ const events = require('events');
 const EventEmitter = events.EventEmitter;
 const child_process = require('child_process');
 
+const idUtils = require('./lib/idUtils');
+
 class Antikyth extends EventEmitter {
   constructor() {
     super();
@@ -140,7 +142,7 @@ class Antikyth extends EventEmitter {
 
 class World {
   constructor() {
-    this.id = _makeId();
+    this.id = idUtils.makeId();
     this.parent = null;
     this.queue = [];
   }
@@ -240,7 +242,7 @@ class Body extends EventEmitter {
   constructor() {
     super();
 
-    this.id = _makeId();
+    this.id = idUtils.makeId();
     this.parent = null;
     this.queue = [];
   }
@@ -334,7 +336,5 @@ class Sphere extends Body {
   }
 }
 Antikyth.Sphere = Sphere;
-
-const _makeId = () => Math.random().toString(36).substring(7);
 
 module.exports = Antikyth;

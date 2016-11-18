@@ -9,28 +9,42 @@ class Context {
     this.objects = new Map();
   }
 
-  create(type, opts) {
+  create(type, id, opts) {
     const object = (() => {
       switch (type) {
         case 'engine': {
           const engine = new Antikyth(opts);
+          engine.clientId = id;
           engine.start();
           return engine;
         }
-        case 'world': return new Antikyth.World(opts);
-        case 'plane': return new Antikyth.Plane(opts);
-        case 'box': return new Antikyth.Box(opts);
-        case 'sphere': return new Antikyth.Sphere(opts);
+        case 'world': {
+          const world = new Antikyth.World(opts);
+          world.clientId = id;
+          return world;
+        }
+        case 'plane': {
+          const plane = new Antikyth.Plane(opts);
+          plane.clientId = id;
+          return plane;
+        }
+        case 'box': {
+          const box = new Antikyth.Box(opts);
+          box.clientId = id;
+          return box;
+        }
+        case 'sphere': {
+          const sphere = new Antikyth.Sphere(opts);
+          sphere.clientId = id;
+          return sphere;
+        }
         default: return null;
       }
     })();
 
     if (object) {
-      this.objects.set(id, object);
-
-      return object.id;
-    } else {
-      return null3;
+      const {clientId} = object;
+      this.objects.set(clientId, object);
     }
   }
 
@@ -138,10 +152,10 @@ const server = ({wss}) => ({
             };
 
             if (method === 'create') {
-              const [type, opts] = args;
-              const id = context.create(type, opts);
+              const [type, id, opts] = args;
+              context.create(type, id, opts);
 
-              cb(null, id);
+              cb();
             } else if (method === 'destroy') {
               const [id] = args;
               context.destroy(id);

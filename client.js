@@ -1,3 +1,5 @@
+const idUtils = require('./lib/idUtils');
+
 const FRAME_RATE = 60;
 const TICK_TIME = 1000 / FRAME_RATE;
 
@@ -37,7 +39,7 @@ const client = () => ({
       let queue = [];
       const requestHandlers = new Map();
       const _request = (method, args, cb) => {
-        const id = _makeId();
+        const id = idUitls.makeId();
 
         const e = {
           method,
@@ -116,25 +118,61 @@ const client = () => ({
         }
       };
 
-      class Engine {
-        constructor(opts) {
-          _request('create', ['engine', {}], _warnError);
+      class Entity {
+        constructor() {
+          const id = idUtils.makeId();
+          this.id = id;
+        }
+
+        add(child) {
+          const {id: parentId} = this;
+          const {id: childId} = child;
+
+          _request('add', [parentId, childId], _warnError);
+        }
+
+        remove(child) {
+          const {id: parentId} = this;
+          const {id: childId} = child;
+
+          _request('remove', [parentId, childId], _warnError);
         }
       }
 
-      class World {
+      class Engine extends Entity {
         constructor(opts) {
-          _request('create', ['world', {}], _warnError);
+          super();
+
+          const {id} = this;
+
+          _request('create', ['engine', id, {}], _warnError);
+        }
+
+        destroy() {
+          const {id} = this;
+
+          _request('destroy', [id], _warnError);
+        }
+      }
+
+      class World extends Entity {
+        constructor(opts) {
+          super();
+
+          const {id} = this;
+
+          _request('create', ['world', id, {}], _warnError);
         }
       }
       Engine.World = World;
 
-      class Body {
+      class Body extends Entity {
         constructor(type, opts) {
-          const id = null;
-          this.id = id; // XXX initialize ids for these
+          super();
 
-          _request('create', [type, opts], _warnError);
+          const {id} = this;
+
+          _request('create', [type, id, opts], _warnError);
         }
 
         update({position, rotation, linearVelocity, angularVelocity}) {
@@ -200,8 +238,6 @@ const client = () => ({
     this._cleanup();
   },
 });
-
-const _makeId = () => Math.random().toString(36).substring(7);
 
 const _warnError = err => {
   if (err) {

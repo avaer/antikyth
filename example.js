@@ -1,7 +1,8 @@
 const Antikyth = require('.');
 
-const UPDATE_RATE = 1000 / 60;
-const SET_RATE = 1000 * 2;
+const FRAME_RATE = 60;
+const TICK_TIME = 1000 / FRAME_RATE;
+const SET_TIME = 1000 * 2;
 
 const antikyth = new Antikyth();
 
@@ -47,11 +48,11 @@ antikyth.add(world);
 
 setInterval(() => {
   antikyth.requestUpdate();
-}, UPDATE_RATE);
+}, TICK_TIME);
 setInterval(() => {
   const {box} = world;
   box.setPosition(0, 2, 0);
   box.setRotation(Math.PI / 8, 0, 0, 1);
-}, SET_RATE);
+}, SET_TIME);
 
 antikyth.start();
