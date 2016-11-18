@@ -53,6 +53,34 @@ class World {
     parent.remove(child);
   }
 
+  setPosition(id, position) {
+    const {objects} = this;
+
+    const object = objects.get(id);
+    object.setPosition(position);
+  }
+
+  setRotation(id, rotation) {
+    const {objects} = this;
+
+    const object = objects.get(id);
+    object.setRotation(rotation);
+  }
+
+  setLinearVelocity(id, linearVelocity) {
+    const {objects} = this;
+
+    const object = objects.get(id);
+    object.setLinearVelocity(linearVelocity);
+  }
+
+  setAngularVelocity(id, angularVelocity) {
+    const {objects} = this;
+
+    const object = objects.get(id);
+    object.setAngularVelocity(angularVelocity);
+  }
+
   getUpdate(cb) {
     this.engine.requestUpdate();
 
@@ -118,9 +146,24 @@ const server = ({wss}) => ({
               world.remove(parentId, childId);
 
               cb();
-} else if (method === 'remove') {
-              const [parentId, childId] = args;
-              world.remove(parentId, childId);
+            } else if (method === 'setPosition') {
+              const [id, position] = args;
+              world.setPosition(id, position);
+
+              cb();
+            } else if (method === 'setRotation') {
+              const [id, rotation] = args;
+              world.setRotation(id, rotation);
+
+              cb();
+            } else if (method === 'setLinearVelocity') {
+              const [id, linearVelocity] = args;
+              world.setLinearVelocity(id, linearVelocity);
+
+              cb();
+            } else if (method === 'setAngularVelocity') {
+              const [id, angularVelocity] = args;
+              world.setAngularVelocity(id, angularVelocity);
 
               cb();
             } else if (method === 'requestUpdate') {
