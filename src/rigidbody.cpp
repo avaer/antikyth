@@ -141,16 +141,20 @@ NAN_METHOD(mox::physics::RigidBody::make)
       .ToLocalChecked()).ToLocalChecked();
 
     int numScalars = Nan::To<int>(Nan::Get(pointsArray, keyLength).ToLocalChecked()).FromJust();
-    btScalar points[numScalars];
-    for (int i = 0; i < numScalars; i++) {
-      points[i] = btScalar(Nan::To<double>(Nan::Get(pointsArray, i).ToLocalChecked()).FromJust());
-    }
-    int numPoints = numScalars / 3;
+    if (numScalars % 3 == 0) {
+      btScalar points[numScalars];
+      for (int i = 0; i < numScalars; i++) {
+        points[i] = btScalar(Nan::To<double>(Nan::Get(pointsArray, i).ToLocalChecked()).FromJust());
+      }
+      int numPoints = numScalars / 3;
 
-    nativeInstance->m_collisionShape = std::make_shared<btConvexHullShape>(
-      (btScalar *)points,
-      numPoints
-    );
+      nativeInstance->m_collisionShape = std::make_shared<btConvexHullShape>(
+        (btScalar *)points,
+        numPoints
+      );
+    } else {
+      Nan::ThrowRangeError("points size is invalid");
+    }
     break;
   }
   case TRIANGLE_MESH: {
@@ -159,35 +163,40 @@ NAN_METHOD(mox::physics::RigidBody::make)
       .ToLocalChecked()).ToLocalChecked();
 
     int numScalars = Nan::To<int>(Nan::Get(pointsArray, keyLength).ToLocalChecked()).FromJust();
-    int numPoints = numScalars / 3;
-    int numTriangles = numPoints / 3;
-    nativeInstance->m_triangleMesh = std::make_shared<btTriangleMesh>();
-    for (int i = 0; i < numTriangles; i++) {
-      int baseIndex = i * 3 * 3;
-      nativeInstance->m_triangleMesh->addTriangle(
-        btVector3(
-          btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 0).ToLocalChecked()).FromJust()),
-          btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 1).ToLocalChecked()).FromJust()),
-          btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 2).ToLocalChecked()).FromJust())
-        ),
-        btVector3(
-          btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 3).ToLocalChecked()).FromJust()),
-          btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 4).ToLocalChecked()).FromJust()),
-          btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 5).ToLocalChecked()).FromJust())
-        ),
-        btVector3(
-          btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 6).ToLocalChecked()).FromJust()),
-          btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 7).ToLocalChecked()).FromJust()),
-          btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 8).ToLocalChecked()).FromJust())
-        ),
+    if (numScalars % 9 == 0) {
+      int numPoints = numScalars / 3;
+      int numTriangles = numPoints / 3;
+
+      nativeInstance->m_triangleMesh = std::make_shared<btTriangleMesh>();
+      for (int i = 0; i < numTriangles; i++) {
+        int baseIndex = i * 3 * 3;
+        nativeInstance->m_triangleMesh->addTriangle(
+          btVector3(
+            btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 0).ToLocalChecked()).FromJust()),
+            btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 1).ToLocalChecked()).FromJust()),
+            btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 2).ToLocalChecked()).FromJust())
+          ),
+          btVector3(
+            btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 3).ToLocalChecked()).FromJust()),
+            btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 4).ToLocalChecked()).FromJust()),
+            btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 5).ToLocalChecked()).FromJust())
+          ),
+          btVector3(
+            btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 6).ToLocalChecked()).FromJust()),
+            btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 7).ToLocalChecked()).FromJust()),
+            btScalar(Nan::To<double>(Nan::Get(pointsArray, baseIndex + 8).ToLocalChecked()).FromJust())
+          ),
+          false
+        );
+      }
+
+      nativeInstance->m_collisionShape = std::make_shared<btBvhTriangleMeshShape>(
+        nativeInstance->m_triangleMesh.get(),
         false
       );
+    } else {
+      Nan::ThrowRangeError("points size is invalid");
     }
-
-    nativeInstance->m_collisionShape = std::make_shared<btBvhTriangleMeshShape>(
-      nativeInstance->m_triangleMesh.get(),
-      false
-    );
     break;
   }
   }

@@ -228,6 +228,20 @@ const client = () => ({
         }
       }
       Engine.Box = Box;
+
+      class ConvexHull extends Body {
+        constructor(opts) {
+          super('convexHull', opts);
+        }
+      }
+      Engine.ConvexHull = ConvexHull;
+
+      class TriangleMesh extends Body {
+        constructor(opts) {
+          super('triangleMesh', opts);
+        }
+      }
+      Engine.TriangleMesh = TriangleMesh;
     };
 
     return {

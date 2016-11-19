@@ -72,6 +72,14 @@ class Antikyth extends EventEmitter {
   }
 
   addBody(world, body) {
+    const _formatPoints = points => {
+      if (Array.isArray(points)) {
+        return points;
+      } else {
+        return Array.from(points);
+      }
+    };
+
     this.send('addBody', {
       worldId: world.id,
       body: {
@@ -80,6 +88,7 @@ class Antikyth extends EventEmitter {
         position: body.position,
         dimensions: body.dimensions,
         size: body.size,
+        points: _formatPoints(body.points),
         mass: body.mass,
       },
     });
@@ -336,5 +345,33 @@ class Sphere extends Body {
   }
 }
 Antikyth.Sphere = Sphere;
+
+class ConvexHull extends Body {
+  constructor(opts) {
+    super();
+
+    const {position = null, rotation = null, points = null, mass = 0} = opts;
+    this.type = 'convexHull';
+    this.position = position;
+    this.rotation = rotation;
+    this.points = points;
+    this.mass = mass;
+  }
+}
+Antikyth.ConvexHull = ConvexHull;
+
+class TriangleMesh extends Body {
+  constructor(opts) {
+    super();
+
+    const {position = null, rotation = null, points = null, mass = 0} = opts;
+    this.type = 'triangleMesh';
+    this.position = position;
+    this.rotation = rotation;
+    this.points = points;
+    this.mass = mass;
+  }
+}
+Antikyth.TriangleMesh = TriangleMesh;
 
 module.exports = Antikyth;

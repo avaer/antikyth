@@ -14,40 +14,6 @@ class BodyRecord {
   }
 }
 
-/* const world = new physics.World();
-
-const floor = physics.RigidBody.make({
-  type: physics.RigidBody.PLANE,
-  dimensions: [0, 1, 0],
-  mass: 0,
-});
-floor.setPosition(0, 0, 0);
-
-const box1 = physics.RigidBody.make({
-  type: physics.RigidBody.BOX,
-  dimensions: [1, 1, 1],
-  mass: 1,
-});
-box1.setPosition(0, 2, 0);
-box1.setRotation(Math.PI / 8, 0, 0, 1);
-
-const sphere1 = physics.RigidBody.make({
-  type: physics.RigidBody.SPHERE,
-  size: 1,
-  mass: 1,
-});
-sphere1.setPosition(10, 2, 10);
-
-world.addRigidBody(floor);
-world.addRigidBody(box1);
-world.addRigidBody(sphere1); */
-
-/* for (let i = 0; i < FPS * TIME; i++) {
-  world.stepSimulation(STEP_SECONDS, 1, STEP_SECONDS);
-  const rotation = box1.getRotation();
-  console.log(rotation[0], rotation[1], rotation[2], rotation[3]);
-} */
-
 const _requestUpdate = () => {
   const updates = bodies.map((bodyRecord, bodyId) => {
     const {body} = bodyRecord;
@@ -177,6 +143,38 @@ const _makeBody = bodySpec => {
       }
 
       return sphere;
+    }
+    case 'convexHull': {
+      const {size, points, position, rotation} = bodySpec;
+
+      const convexHull = physics.RigidBody.make({
+        type: physics.RigidBody.CONVEX_HULL,
+        convexHull,
+        mass,
+      });
+      if (position) {
+        convexHull.setPosition(position[0], position[1], position[2]);
+      }
+      if (rotation) {
+        convexHull.setRotation(rotation[0], rotation[1], rotation[2], rotation[3]);
+      }
+
+      return convexHull;
+    }
+    case 'triangleMesh': {
+      const {size, points, position, rotation} = bodySpec;
+
+      const triangleMesh = physics.RigidBody.make({
+        type: physics.RigidBody.CONVEX_HULL,
+        points,
+        mass,
+      });
+      if (position) {
+        triangleMesh.setPosition(position[0], position[1], position[2]);
+      }
+      if (rotation) {
+        triangleMesh.setRotation(rotation[0], rotation[1], rotation[2], rotation[3]);
+      triangleMesh convexHull;
     }
     default:
       return null;
