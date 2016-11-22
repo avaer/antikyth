@@ -73,10 +73,14 @@ class Antikyth extends EventEmitter {
 
   addBody(world, body) {
     const _formatPoints = points => {
-      if (Array.isArray(points)) {
-        return points;
+      if (points) {
+        if (Array.isArray(points)) {
+          return points;
+        } else {
+          return Array.from(points);
+        }
       } else {
-        return Array.from(points);
+        return null;
       }
     };
 

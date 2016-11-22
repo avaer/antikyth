@@ -15,20 +15,23 @@ class BodyRecord {
 }
 
 const _requestUpdate = () => {
-  const updates = bodies.map((bodyRecord, bodyId) => {
+  const updates = [];
+
+  bodies.forEach((bodyRecord, bodyId) => {
     const {body} = bodyRecord;
     const position = body.getPosition();
     const rotation = body.getRotation();
     const linearVelocity = body.getLinearVelocity();
     const angularVelocity = body.getAngularVelocity();
 
-    return {
+    const update = {
       id: bodyId,
       position,
       rotation,
       linearVelocity,
       angularVelocity,
     };
+    updates.push(update);
   });
 
   send('update', updates);
@@ -174,7 +177,7 @@ const _makeBody = bodySpec => {
       }
       if (rotation) {
         triangleMesh.setRotation(rotation[0], rotation[1], rotation[2], rotation[3]);
-      triangleMesh convexHull;
+      }
     }
     default:
       return null;
