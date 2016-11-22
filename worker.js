@@ -1,4 +1,4 @@
-const physics = require('/home/k/physics/build/Release/physics.node');
+const physics = require('./build/Release/physics.node');
 
 const FPS = 120;
 const STEP_SECONDS = 1 / FPS;
