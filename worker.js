@@ -57,7 +57,7 @@ const _addWorld = ({id}) => {
   worlds.set(id, world);
 };
 const _removeWorld = ({id}) => {
-  worlds.remove(id);
+  worlds.delete(id);
 };
 const _addBody = ({worldId, body: bodySpec}) => {
   const world = worlds.get(worldId);
