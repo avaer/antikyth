@@ -315,7 +315,7 @@ NAN_METHOD(mox::physics::RigidBody::getAngularVelocity)
   GET_SELF(mox::physics::RigidBody, self);
   v8::Local<v8::Array> angularVelocity = Nan::New<v8::Array>(3);
 
-  btVector3 av = self->m_rigidBody->getLinearVelocity();
+  btVector3 av = self->m_rigidBody->getAngularVelocity();
   Nan::Set(angularVelocity, 0, Nan::New<v8::Number>(av.getX()));
   Nan::Set(angularVelocity, 1, Nan::New<v8::Number>(av.getY()));
   Nan::Set(angularVelocity, 2, Nan::New<v8::Number>(av.getZ()));
