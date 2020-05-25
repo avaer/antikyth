@@ -196,6 +196,7 @@ process.on('message', m => {
       break;
     case 'stop':
       _stop();
+      break;
     case 'addWorld': {
       const {args: {id}} = m;
       _addWorld({id});
